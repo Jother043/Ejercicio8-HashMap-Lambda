@@ -1,11 +1,12 @@
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class FlotaVehiculos {
 
-    private HashMap<String, Vehiculo> vehiculos;
+    private final HashMap<String, Vehiculo> vehiculos;
 
     /**
      * Variable que guarda donde se insertará el siguiente vehiculo
@@ -56,21 +57,21 @@ public class FlotaVehiculos {
                 .sorted(Comparator.comparing(Vehiculo::getGama)).toList();
     }
 
-    public List<Vehiculo> listadoOrdenadoPrecioAlquiler(int numDias){
+    public List<Vehiculo> listadoOrdenadoPrecioAlquiler(int numDias, double precioMinimo) {
 
         return vehiculos.values().stream().filter(vehiculo -> {
             boolean esMayor = false;
             try {
-                esMayor = vehiculo.calcularAlquiler(numDias)>400;
+                esMayor = vehiculo.calcularAlquiler(numDias) > precioMinimo;
             } catch (VehiculoException e) {
                 e.printStackTrace();
             }
             return esMayor;
         }).sorted((v1, v2) -> {
             try {
-               return (int) (v1.calcularAlquiler(numDias) - v2.calcularAlquiler(numDias));
+                return Double.compare(v2.calcularAlquiler(numDias),v1.calcularAlquiler(numDias));
             } catch (VehiculoException e) {
-                e.getMessage();
+
             }
             return numDias;
         }).toList();

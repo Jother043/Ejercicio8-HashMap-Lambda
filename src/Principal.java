@@ -6,224 +6,262 @@ import java.util.Scanner;
 
 public class Principal {
 
-	private static final int OPCION_SALIR = 6;
-	private static Scanner teclado = new Scanner(System.in);
+    private static final int OPCION_SALIR = 7;
+    private static Scanner teclado = new Scanner(System.in);
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		int opcion;
-		FlotaVehiculos flotaVehiculos;
 
-		try {
-			flotaVehiculos = new FlotaVehiculos();
-			do {
-				opcion = mostrarMenu();
-				tratarMenu(opcion, flotaVehiculos);
+        int opcion;
+        FlotaVehiculos flotaVehiculos;
 
-			} while (opcion != OPCION_SALIR);
-		} catch (VehiculoException e) {
-			System.out.println(e.getMessage());
-		}
+        try {
+            flotaVehiculos = new FlotaVehiculos();
+            Furgoneta v1 = new Furgoneta("1234ABC", TipoGama.ALTA, 1500);
+            Furgoneta v2 = new Furgoneta("3124LLB", TipoGama.MEDIA, 900);
+            Furgoneta v3 = new Furgoneta("9764AAB", TipoGama.BAJA, 2000);
+            Coche v4 = new Coche("9431GDZ", TipoGama.ALTA, TipoCombustible.DIESEL);
+            Coche v5 = new Coche("2297ANB", TipoGama.ALTA, TipoCombustible.GASOLINA);
+            Coche v6 = new Coche("8566BZE", TipoGama.BAJA, TipoCombustible.GASOLINA);
+            Microbus v7 = new Microbus("2463ÑÑP", TipoGama.BAJA, 15);
+            Microbus v8 = new Microbus("1974LLO", TipoGama.MEDIA, 10);
+            Microbus v9 = new Microbus("6471UOR", TipoGama.ALTA, 20);
+            flotaVehiculos.introducirVehiculo(v1);
+            flotaVehiculos.introducirVehiculo(v2);
+            flotaVehiculos.introducirVehiculo(v3);
+            flotaVehiculos.introducirVehiculo(v4);
+            flotaVehiculos.introducirVehiculo(v5);
+            flotaVehiculos.introducirVehiculo(v6);
+            flotaVehiculos.introducirVehiculo(v7);
+            flotaVehiculos.introducirVehiculo(v8);
+            flotaVehiculos.introducirVehiculo(v9);
+            do {
+                opcion = mostrarMenu();
+                tratarMenu(opcion, flotaVehiculos);
 
-	}
+            } while (opcion != OPCION_SALIR);
 
-	private static void tratarMenu(int opcion, FlotaVehiculos flotaVehiculos) {
-		Vehiculo vehiculo;
-		String matricula;
-		int dias;
-		double precioAlquiler;
+        } catch (VehiculoException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
-		try {
-			switch (opcion) {
-			case 1: {
-				vehiculo = elegirTipoVehiculo();
-				flotaVehiculos.introducirVehiculo(vehiculo);
-				break;
-			}
-			case 2: {
+    private static void tratarMenu(int opcion, FlotaVehiculos flotaVehiculos) {
+        Vehiculo vehiculo;
+        String matricula;
+        int dias;
+        double precioAlquiler;
 
-				matricula = introduceMatricula();
-				dias = solicitarDias();
-				precioAlquiler = flotaVehiculos.precioAlquiler(matricula, dias);
+        try {
+            switch (opcion) {
+                case 1: {
+                    vehiculo = elegirTipoVehiculo();
+                    flotaVehiculos.introducirVehiculo(vehiculo);
+                    break;
+                }
+                case 2: {
 
-				System.out.println("El vehículo con la matricula " + matricula + " tiene que pagar por alquiler "
-						+ precioAlquiler);
+                    matricula = introduceMatricula();
+                    dias = solicitarDias();
+                    precioAlquiler = flotaVehiculos.precioAlquiler(matricula, dias);
 
-				break;
+                    System.out.println("El vehículo con la matricula " + matricula + " tiene que pagar por alquiler "
+                            + precioAlquiler);
 
-			}
-			case 3:{ // consulta de todos los vehículos ordenados por matricula
-				mostrarVehiculosOrdenadosMatricula(flotaVehiculos);
-				break;
-			}
-			
-			case 4:{ // consulta de todos las furgonetas ordenadas por pma
-				mostrarFurgonetasOrdenadasPma(flotaVehiculos);
-				break;
-			}
-			
-			case 5: { // consulta de todos los vehículos ordenados por gama{
-				mostratVehiculosOrdenadosGama(flotaVehiculos);
-				break;
-			}
-		}
-			
-		} catch (VehiculoException e) {
-			System.out.println(e.getMessage());
-		}
+                    break;
 
-	}
+                }
+                case 3: { // consulta de todos los vehículos ordenados por matricula
+                    mostrarVehiculosOrdenadosMatricula(flotaVehiculos);
+                    break;
+                }
 
-	private static int solicitarDias() {
+                case 4: { // consulta de todos las furgonetas ordenadas por pma
+                    mostrarFurgonetasOrdenadasPma(flotaVehiculos);
+                    break;
+                }
 
-		int dias = -1;
+                case 5: { // consulta de todos los vehículos ordenados por gama{
+                    mostratVehiculosOrdenadosGama(flotaVehiculos);
+                    break;
+                }
 
-		do {
-			try {
-				System.out.println("Introduce el número de dias que el vehiculo ha estado alquilado");
+                case 6: { // consulta de todos los vehículos ordenados por gama{
+                    moastrarVehiculosOrdenadosPorPrecio(flotaVehiculos);
+                    break;
+                }
+            }
 
-				dias = Integer.parseInt(teclado.nextLine());
-			} catch (NumberFormatException e) {
-				System.out.println("Introduce un numero positivo");
-			}
+        } catch (VehiculoException e) {
+            System.out.println(e.getMessage());
+        }
 
-		} while (dias < 0);
+    }
 
-		return dias;
-	}
+    private static int solicitarDias() {
 
-	private static Vehiculo elegirTipoVehiculo() throws VehiculoException {
-		Vehiculo vehiculo = null;
-		String tipoVehiculo;
-		String matricula;
-		TipoGama gama;
-		TipoCombustible combustible;
-		int numPlazas;
-		int pma;
+        int dias = -1;
 
-		tipoVehiculo = solicitarTipoVehiculo();
+        do {
+            try {
+                System.out.println("Introduce el número de dias que el vehiculo ha estado alquilado");
 
-		matricula = introduceMatricula();
-		gama = introduceGama();
+                dias = Integer.parseInt(teclado.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Introduce un numero positivo");
+            }
 
-		switch (tipoVehiculo) {
-		case "COCHE": {
+        } while (dias < 0);
 
-			combustible = introduceCombustible();
-			vehiculo = new Coche(matricula, gama, combustible);
-			break;
-		}
-		case "MICROBUS": {
-			System.out.println("N�mero de plazas que tiene");
-			numPlazas = Integer.parseInt(teclado.nextLine());
-			vehiculo = new Microbus(matricula, gama, numPlazas);
+        return dias;
+    }
 
-			break;
-		}
-		case "FURGONETA": {
-			System.out.println("Introduce el peso m�nimo autorizado del veh�culo");
-			pma = Integer.parseInt(teclado.nextLine());
-			vehiculo = new Furgoneta(matricula, gama, pma);
+    private static Vehiculo elegirTipoVehiculo() throws VehiculoException {
+        Vehiculo vehiculo = null;
+        String tipoVehiculo;
+        String matricula;
+        TipoGama gama;
+        TipoCombustible combustible;
+        int numPlazas;
+        int pma;
 
-			break;
-		}
+        tipoVehiculo = solicitarTipoVehiculo();
 
-		}
+        matricula = introduceMatricula();
+        gama = introduceGama();
 
-		return vehiculo;
+        switch (tipoVehiculo) {
+            case "COCHE": {
 
-	}
+                combustible = introduceCombustible();
+                vehiculo = new Coche(matricula, gama, combustible);
+                break;
+            }
+            case "MICROBUS": {
+                System.out.println("N�mero de plazas que tiene");
+                numPlazas = Integer.parseInt(teclado.nextLine());
+                vehiculo = new Microbus(matricula, gama, numPlazas);
 
-	private static String solicitarTipoVehiculo() {
-		String tipoVehiculo;
-		do {
-			System.out.println("Que tipo de veh�culo va a dar de alta: Coche, Microbus, Furgoneta");
-			tipoVehiculo = teclado.nextLine().toUpperCase();
+                break;
+            }
+            case "FURGONETA": {
+                System.out.println("Introduce el peso m�nimo autorizado del veh�culo");
+                pma = Integer.parseInt(teclado.nextLine());
+                vehiculo = new Furgoneta(matricula, gama, pma);
 
-		} while (!(tipoVehiculo.equals("COCHE") || tipoVehiculo.equals("MICROBUS")
-				|| tipoVehiculo.equals("FURGONETA")));
+                break;
+            }
 
-		return tipoVehiculo;
-	}
+        }
 
-	private static String introduceMatricula() {
-		String matricula;
+        return vehiculo;
 
-		System.out.println("Introduce matrícula");
-		matricula = teclado.nextLine().toUpperCase();
-		return matricula;
-	}
+    }
 
-	private static TipoGama introduceGama() {
-		TipoGama gama = null;
-		String cadena;
-		boolean correcto = false;
+    private static String solicitarTipoVehiculo() {
+        String tipoVehiculo;
+        do {
+            System.out.println("Que tipo de veh�culo va a dar de alta: Coche, Microbus, Furgoneta");
+            tipoVehiculo = teclado.nextLine().toUpperCase();
 
-		do {
-			System.out.println("Introduce gama a la que pertenece " + Arrays.toString(TipoGama.values()));
-			cadena = teclado.nextLine().toUpperCase();
-			try {
-				gama = TipoGama.valueOf(cadena);
-				correcto = true;
-			} catch (IllegalArgumentException e) {
-				System.out.println("No ha introducido una gama correcta");
-			}
+        } while (!(tipoVehiculo.equals("COCHE") || tipoVehiculo.equals("MICROBUS")
+                || tipoVehiculo.equals("FURGONETA")));
 
-		} while (correcto == false);
+        return tipoVehiculo;
+    }
 
-		return gama;
+    private static String introduceMatricula() {
+        String matricula;
 
-	}
+        System.out.println("Introduce matrícula");
+        matricula = teclado.nextLine().toUpperCase();
+        return matricula;
+    }
 
-	private static TipoCombustible introduceCombustible() {
-		TipoCombustible combustible = null;
-		String cadena;
-		boolean correcto = false;
-		do {
-			System.out.println("Tipo de combustible que usa:" + Arrays.toString(TipoCombustible.values()));
-			cadena = teclado.nextLine().toUpperCase();
-			try {
-				combustible = TipoCombustible.valueOf(cadena);
-				correcto = true;
-			} catch (IllegalArgumentException e) {
-				System.out.println("No ha introducido un combustible correcto");
-			}
+    private static TipoGama introduceGama() {
+        TipoGama gama = null;
+        String cadena;
+        boolean correcto = false;
 
-		} while (correcto == false);
+        do {
+            System.out.println("Introduce gama a la que pertenece " + Arrays.toString(TipoGama.values()));
+            cadena = teclado.nextLine().toUpperCase();
+            try {
+                gama = TipoGama.valueOf(cadena);
+                correcto = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println("No ha introducido una gama correcta");
+            }
 
-		return combustible;
-	}
+        } while (correcto == false);
 
-	// M�todo mostrar menu
-	private static int mostrarMenu() {
-		int op = 0;
-		do {
-			System.out.println("Menú vehículos:");
-			System.out.println("1.-Alta vehículo");
-			System.out.println("2.-Precio Alquiler");
-			System.out.println("3.-Consultar Vehiculos ordenados por matrícula ");
-			System.out.println("4.-Consultar furgonetas ordenados por PMA");
-			System.out.println("5.-Consultar vehiculos ordenados por gama");
-			try {
-				op = Integer.parseInt(teclado.nextLine());
-			} catch (NumberFormatException e) {
-				System.out.println("Introduzca un n�mero de 1 al " + OPCION_SALIR);
-			}
-		} while (op < 1 || op > OPCION_SALIR);
+        return gama;
 
-		return op;
-	}
+    }
 
-	private static void mostrarVehiculosOrdenadosMatricula(FlotaVehiculos flotaVehiculos){
-		flotaVehiculos.listadoOrdenadoMatricula().forEach(System.out::println);
-	}
+    private static TipoCombustible introduceCombustible() {
+        TipoCombustible combustible = null;
+        String cadena;
+        boolean correcto = false;
+        do {
+            System.out.println("Tipo de combustible que usa:" + Arrays.toString(TipoCombustible.values()));
+            cadena = teclado.nextLine().toUpperCase();
+            try {
+                combustible = TipoCombustible.valueOf(cadena);
+                correcto = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println("No ha introducido un combustible correcto");
+            }
 
-	private static void mostrarFurgonetasOrdenadasPma(FlotaVehiculos flotaVehiculos){
-		flotaVehiculos.listadoFurgonetaOrdenadaPma().forEach(System.out::println);
-	}
+        } while (correcto == false);
 
-	private static void mostratVehiculosOrdenadosGama(FlotaVehiculos flotaVehiculos){
-		flotaVehiculos.listadoVehiculosOrdenadoGama().forEach(System.out::println);
-	}
+        return combustible;
+    }
 
+    // M�todo mostrar menu
+    private static int mostrarMenu() {
+        int op = 0;
+        do {
+            System.out.println("Menú vehículos:");
+            System.out.println("1.-Alta vehículo");
+            System.out.println("2.-Precio Alquiler");
+            System.out.println("3.-Consultar Vehiculos ordenados por matrícula ");
+            System.out.println("4.-Consultar furgonetas ordenados por PMA");
+            System.out.println("5.-Consultar vehiculos ordenados por gama");
+            System.out.println("6.-Consultar vehiculos ordenados por precio mayor que un precio dado");
+            try {
+                op = Integer.parseInt(teclado.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Introduzca un n�mero de 1 al " + OPCION_SALIR);
+            }
+        } while (op < 1 || op > OPCION_SALIR);
+
+        return op;
+    }
+
+    private static void mostrarVehiculosOrdenadosMatricula(FlotaVehiculos flotaVehiculos) {
+        flotaVehiculos.listadoOrdenadoMatricula().forEach(System.out::println);
+    }
+
+    private static void mostrarFurgonetasOrdenadasPma(FlotaVehiculos flotaVehiculos) {
+        flotaVehiculos.listadoFurgonetaOrdenadaPma().forEach(System.out::println);
+    }
+
+    private static void mostratVehiculosOrdenadosGama(FlotaVehiculos flotaVehiculos) {
+        flotaVehiculos.listadoVehiculosOrdenadoGama().forEach(System.out::println);
+    }
+
+    private static void moastrarVehiculosOrdenadosPorPrecio(FlotaVehiculos flotaVehiculos) {
+        System.out.println("Introduce el número de dias");
+        int dias = Integer.parseInt(teclado.nextLine());
+        System.out.println("Introduce el precio minimo");
+        double precioMinimo = Double.parseDouble(teclado.nextLine());
+        flotaVehiculos.listadoOrdenadoPrecioAlquiler(dias, precioMinimo).forEach(v -> {
+            try {
+                System.out.printf("%s: %.2f\n",v, v.calcularAlquiler(dias));
+            } catch (VehiculoException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }
