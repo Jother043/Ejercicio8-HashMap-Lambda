@@ -1,58 +1,83 @@
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class FlotaVehiculos {
-	
-	private HashMap<String, Vehiculo> vehiculos;
 
-	/**
-	 *  Variable que guarda donde se insertará el siguiente vehiculo
-	 *  Empieza con 0 y si vale vehiculos.length el almacen esta lleno
-	 */
-	private int numeroRealDeVehiculos;
+    private HashMap<String, Vehiculo> vehiculos;
 
-	public FlotaVehiculos() throws VehiculoException {
+    /**
+     * Variable que guarda donde se insertará el siguiente vehiculo
+     * Empieza con 0 y si vale vehiculos.length el almacen esta lleno
+     */
+    private int numeroRealDeVehiculos;
 
-		vehiculos = new HashMap<>();
-		numeroRealDeVehiculos = 0;
-	}
+    public FlotaVehiculos() throws VehiculoException {
 
-	public void introducirVehiculo(Vehiculo vehiculo) throws VehiculoException {
+        vehiculos = new HashMap<>();
+        numeroRealDeVehiculos = 0;
+    }
 
-		if(vehiculos.containsKey(vehiculo.getMatricula())){
-			throw new VehiculoException("El vehiculo que intenta introducir ya existe.");
-		}
-		vehiculos.put(vehiculo.getMatricula(), vehiculo);
-		numeroRealDeVehiculos++;
-	}
+    public void introducirVehiculo(Vehiculo vehiculo) throws VehiculoException {
 
-	private Vehiculo buscarMatricula(String matricula) {
-		return vehiculos.get(matricula);
-	}
+        if (vehiculos.containsKey(vehiculo.getMatricula())) {
+            throw new VehiculoException("El vehiculo que intenta introducir ya existe.");
+        }
+        vehiculos.put(vehiculo.getMatricula(), vehiculo);
+        numeroRealDeVehiculos++;
+    }
 
-	public double precioAlquiler(String matricula, int dias) throws VehiculoException {
-		Vehiculo v	= buscarMatricula(matricula);
-		if(v == null){
-			throw new VehiculoException("No existe el vehiculo");
-		}
-		return v.calcularAlquiler(dias);
-	}
+    private Vehiculo buscarMatricula(String matricula) {
+        return vehiculos.get(matricula);
+    }
 
-	public List<Vehiculo> listadoOrdenadoMatricula (){
-		return vehiculos.values().stream().sorted((v1,v2) -> v1.getMatricula().compareTo(v2.getMatricula())).toList();
-	}
+    public double precioAlquiler(String matricula, int dias) throws VehiculoException {
+        Vehiculo v = buscarMatricula(matricula);
+        if (v == null) {
+            throw new VehiculoException("No existe el vehiculo");
+        }
+        return v.calcularAlquiler(dias);
+    }
 
-	public List<Furgoneta> listadoFurgonetaOrdenadaPma(){
-		return vehiculos.values().stream().filter(v -> v instanceof Furgoneta).map(v -> (Furgoneta)v).sorted((f1,f2) -> f1.getPma() - f2.getPma()).toList();
-	}
+    public List<Vehiculo> listadoOrdenadoMatricula() {
+        return vehiculos.values().stream().sorted((v1, v2) -> v1.getMatricula().compareTo(v2.getMatricula())).toList();
+    }
 
-	public List<TipoGama> listadoVehiculosOrdenadoGama(){
-		return vehiculos.values().stream().map(Vehiculo::getGama).sorted(Enum::compareTo).toList();
-	}
-	
-	public String toString() {
-		
-		return null;
-	}
+    public List<Furgoneta> listadoFurgonetaOrdenadaPma() {
+        return vehiculos.values().stream()
+                //.filter(v -> v instanceof Furgoneta)
+                .filter(Furgoneta.class::isInstance)
+                .map(v -> (Furgoneta) v).sorted((f1, f2) -> f1.getPma() - f2.getPma()).toList();
+    }
+
+    public List<Vehiculo> listadoVehiculosOrdenadoGama() {
+        return vehiculos.values().stream()
+                .sorted(Comparator.comparing(Vehiculo::getGama)).toList();
+    }
+
+    public List<Vehiculo> listadoOrdenadoPrecioAlquiler(int numDias){
+
+        return vehiculos.values().stream().filter(vehiculo -> {
+            boolean esMayor = false;
+            try {
+                esMayor = vehiculo.calcularAlquiler(numDias)>400;
+            } catch (VehiculoException e) {
+                e.printStackTrace();
+            }
+            return esMayor;
+        }).sorted((v1, v2) -> {
+            try {
+               return (int) (v1.calcularAlquiler(numDias) - v2.calcularAlquiler(numDias));
+            } catch (VehiculoException e) {
+                e.getMessage();
+            }
+            return numDias;
+        }).toList();
+    }
+
+    public String toString() {
+
+        return null;
+    }
 }

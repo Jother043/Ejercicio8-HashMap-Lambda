@@ -225,4 +225,5 @@ public class Principal {
 	private static void mostratVehiculosOrdenadosGama(FlotaVehiculos flotaVehiculos){
 		flotaVehiculos.listadoVehiculosOrdenadoGama().forEach(System.out::println);
 	}
+
 }
